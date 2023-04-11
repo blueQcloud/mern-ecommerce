@@ -1,0 +1,56 @@
+
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  labels:
+    app: ecommerce-app-api
+  name: ecommerce-app-master-branch-build
+  namespace: tcbd1de-tools
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ecommerce-app-api-master-branch
+    labels:
+      app: ecommerce-app-api
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: ecommerce-app-api-master-branch-build
+    labels:
+      app: ecommerce-app-api
+      name: ecommerce-app-api-build
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ecommerce-app-api-master-branch:latest
+    resources:
+      limits:
+        cpu: "500m"
+        memory: "1Gi"
+      requests:
+        cpu: "250m"
+        memory: 500Mi
+    source:
+      git:
+        ref: master
+        uri: https://github.com/blueQcloud/mern-ecommerce.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        dockerfilePath: Dockerfile
+        env:
+        - name: PORT
+          value: "3000"
+        - name: MONGO_URI
+          value: mongodb://127.0.0.1:27017/mern_ecommerce
+        - name: BASE_CLIENT_URL
+          value: http://localhost:8080
+        - name: BASE_SERVER_URL
+          value: http://localhost:3000
+        - name: BASE_API_URL
+          value: api
+      type: Docker
+    triggers:
+    - type: ConfigChange
