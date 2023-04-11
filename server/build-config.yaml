@@ -33,6 +33,7 @@ objects:
         cpu: "250m"
         memory: 500Mi
     source:
+      contextDir: "server"
       git:
         ref: master
         uri: https://github.com/blueQcloud/mern-ecommerce.git
